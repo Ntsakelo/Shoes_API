@@ -445,6 +445,16 @@ export default function ShoesData(db) {
       console.log(err);
     }
   }
+  async function createSale(edition, price) {
+    try {
+      await db.none("update products set sale_price = $1 where item = $2", [
+        price,
+        edition,
+      ]);
+    } catch (err) {
+      console.log(err);
+    }
+  }
   return {
     categories,
     allShoes,
@@ -471,5 +481,6 @@ export default function ShoesData(db) {
     confirmData,
     removeItem,
     checkOutItems,
+    createSale,
   };
 }

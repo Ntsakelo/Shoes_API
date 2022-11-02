@@ -100,3 +100,4 @@ app.use(function (req, res, next) {
 app.get("/admin", shoesRoutes.admin);
 app.get("/logout", shoesRoutes.logout);
 app.post("/stockUpdate", shoesRoutes.addToStock);
+app.post("/sale", shoesRoutes.addSale);

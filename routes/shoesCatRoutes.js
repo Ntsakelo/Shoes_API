@@ -57,11 +57,23 @@ export default function shoesRoutes(shoesData) {
       next(err);
     }
   }
+  async function addSale(req, res, next) {
+    try {
+      let edition = req.body.saleEdition;
+      let price = Number(req.body.salePrice);
+      await shoesData.createSale(edition, price);
+      req.flash("info", "succesfully set item on sale");
+      res.redirect("/admin");
+    } catch (err) {
+      next(err);
+    }
+  }
   return {
     home,
     login,
     logout,
     admin,
     addToStock,
+    addSale,
   };
 }

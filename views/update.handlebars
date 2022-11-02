@@ -206,6 +206,48 @@
         </div>
       </div>
     </div>
+    <div class="saleAction">
+      <p>
+        <a
+          class="btn btn-primary actionBtn"
+          data-bs-toggle="collapse"
+          href="#collapseSale"
+          role="button"
+          aria-expanded="false"
+          aria-controls="collapseExample"
+        >
+          Add Sale
+        </a>
+      </p>
+      <div class="collapse" id="collapseSale">
+        <div class="card card-body">
+          <form action="/sale" method="post">
+            <select
+              class="form-select"
+              name="saleEdition"
+              aria-label="Default select example"
+            >
+              <option selected>SELECT EDITION</option>
+              {{#each edition}}
+                <option value="{{this.item}}">{{this.item}}</option>
+              {{/each}}
+            </select>
+            <div class="input-group">
+              <span class="input-group-text">PRICE</span>
+              <input
+                type="text"
+                name="salePrice"
+                aria-label="First name"
+                class="form-control"
+              />
+            </div>
+            <button class="btn btn-primary addBTN" type="submit">
+              SET SALE
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
   </div>
 
 </div>
