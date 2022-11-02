@@ -393,7 +393,7 @@ export default function ShoesData(db) {
   async function getLogin(user, password) {
     try {
       let results = await db.oneOrNone(
-        "select * from admin_details where username = $1 and user_password = $2",
+        "select * from employees where firstname = $1 and user_password = $2",
         [user, password]
       );
       return results;
