@@ -1,4 +1,7 @@
 import ShortUniqueId from "short-unique-id";
+import bcrypt from "bcrypt";
+import Jwt from "jsonwebtoken";
+
 let uid = new ShortUniqueId({ length: 5 });
 
 export default function (ShoesData) {
@@ -9,6 +12,72 @@ export default function (ShoesData) {
       res.json({
         status: "success",
         data: results,
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+  async function registerUser(req, res, next) {
+    try {
+      let password = await bcrypt.hash(req.body.password, 10);
+      let userData = {
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        email: req.body.email,
+        password: password,
+      };
+      let results = await ShoesData.checkUser(userData);
+      if (Number(results.count) > 0) {
+        return res.json({
+          status: "The user already exists",
+        });
+      } else {
+        await ShoesData.register(userData);
+        res.json({
+          status: "Registration was successful",
+        });
+      }
+    } catch (err) {
+      next(err);
+    }
+  }
+  async function login(req, res, next) {
+    try {
+      let email = req.body.loginEmail;
+      let user = await ShoesData.getUser(email);
+      if (!user) {
+        return res.json({
+          status: "User does not exist",
+        });
+      } else {
+        let isPassword = await bcrypt.compare(req.body.password, user.password);
+        if (isPassword) {
+          const payLoad = {
+            id: user.id,
+          };
+          console.log;
+          const token = Jwt.sign(payLoad, `${process.env.SECRET_KEY}`, {
+            expiresIn: "1d",
+          });
+          res.cookie("access_token", token, { httpOnly: true }).json({
+            firstname: user.firstname,
+            status: "Login successful",
+          });
+        } else {
+          return res.json({
+            status: "Incorrect password",
+          });
+        }
+      }
+    } catch (err) {
+      next(err);
+    }
+  }
+  async function logout(req, res, next) {
+    try {
+      res.clearCookie("access_token");
+      res.json({
+        status: "Logout successful",
       });
     } catch (err) {
       next(err);
@@ -264,17 +333,23 @@ export default function (ShoesData) {
   }
   async function checkOut(req, res, next) {
     try {
-      let results = await ShoesData.checkOutItems();
-      res.json({
-        status: "success",
-        data: results,
-      });
+      res.json("You have access to the checkout route");
+    } catch (err) {
+      next(err);
+    }
+  }
+  async function orders(req, res, next) {
+    try {
+      res.json("You have access to the orders route");
     } catch (err) {
       next(err);
     }
   }
   return {
     getCategories,
+    registerUser,
+    login,
+    logout,
     displayProducts,
     getShoe,
     showBrands,
@@ -295,5 +370,6 @@ export default function (ShoesData) {
     confirm,
     remove,
     checkOut,
+    orders,
   };
 }

@@ -30,7 +30,7 @@
             <script type="text/x-template" class="bgNavListTemplate">
               {{#each category}}
                <li class="nav-item">
-                  <a class="nav-link active {{this.category}}" id="{{this.category}}" aria-current="page">{{this.category}}</a>
+                  <a class="nav-link {{this.category}}" id="{{this.category}}" aria-current="page">{{this.category}}</a>
                 </li>
                 {{/each}}
                 <li class="nav-item">
@@ -40,19 +40,48 @@
                     ><i class="fa-solid fa-cart-shopping"
                       ><span class="count itemsCount">0</span></i
                     ></a
-                  >
-                </li>
-            </script>
+                    >
+                  </li>
+                  <li class="nav-item">
+                    <div class="dropdown">
+                      <a class="nav-link signIn dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"  id="user"><i class="fa-solid fa-user" ></i></a>
+                      <ul class="dropdown-menu" aria-labelledby="user">
+                        <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#staticRegister">Register</a></li>
+                        <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#staticLogin">Sign In</a></li>
+                        <li><a class="dropdown-item" href="#">My Orders</a></li>
+                      </ul>
+                    </div>
+                     </li>
+        
+
+            </script>   
+
             <div class="col big-nav">
-              <ul class="nav nav-tabs bgNavList"></ul>
+              <ul class="nav nav-tabs bgNavList">
+
+              </ul>
             </div>
             <script type="text/x-template" class="navListTemplate">
+              <ul>
+                <h3 class="userHead">Filter</h3>
                {{#each category}}
-              <a class="smallLink nav-link {{this.category}}" id="{{this.category}}"
-                     ><h5 class="text-white h4">{{this.category}}</h5></a
-                   >
-               {{/each}}
+                 <li><a class="smallLink nav-link {{this.category}}" id="{{this.category}}"
+                        ><h5 class="text-white h4">{{this.category}}</h5></a
+                      ></li>
+                      {{/each}}
+              </ul>
+              
+                <ul>
+                  <h3 class="userHead">User</h3>
+                  <li><a class="smallLink nav-link RegisterLink" href="#" data-bs-toggle="modal" data-bs-target="#staticRegister"><h5 class="text-white h4">Register</h5></a></li>
+                  <li><a class="smallLink nav-link" href="#" data-bs-toggle="modal" data-bs-target="#staticLogin"><h5 class="text-white h4">Sign In</h5></a></li>
+                  <li><a class="smallLink nav-link" href="#"><h5 class="text-white h4">My Orders</h5></a></li>
+                </ul>
+                 
+                
+               
             </script>
+
             <div class="col small-nav">
               <div class="row row-cols-2">
                 <div class="col-9 small-nav">
@@ -484,6 +513,76 @@
     </div>
   </div>
 </div>
+
+<div class="modal fade" id="staticRegister" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+       
+        <button type="button" class="btn-close registerClose" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="regFieldsDisplay">
+        <h4>We are so happy to have you join us!</h4>
+        <p>Lets get you started on your shopping journey...</p>
+        <form class="regForm" action="">
+             <input type="text" aria-label="First name" class="regInput firstName" placeholder="First Name">
+             <p class="validation nameValidation">This field is required.</p>
+             <input type="text" aria-label="First name" class="regInput lastName" placeholder="Last Name">
+             <p class="validation lastNameValidation">This field is required.</p>
+             <input type="email" aria-label="First name" class="regInput email" placeholder="Email">
+             <p class="validation emailValidation">This field is required.</p>
+             <input type="password" aria-label="First name" class="regInput password" placeholder="Password">
+             <p class="validation passwordValidation">This field is required.</p>
+             <button type="button" class="btn btn-primary regBtn" >Register</button>
+        </form>
+         <a href="" class="goToLogin"  data-bs-toggle="modal" data-bs-target="#staticLogin" data-bs-dismiss="modal" aria-label="Close">Already have an account</a>
+      </div>
+   
+    </div>
+  </div>
+</div>
+<!-- Login -->
+<div class="modal fade" id="staticLogin" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+       
+        <button type="button" class="btn-close signInClose" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <h4>Welcome Back!</h4>
+        <p>Enjoy your shopping...</p>
+        <form class="signInForm" action="">
+             <input type="email" aria-label="First name" class="signinInput signInEmail" placeholder="Email">
+             <p class="signInValidation">This field is required.</p>
+             <input type="password" aria-label="First name" class="signinInput signInPassword" placeholder="Password">
+             <p class="signInValidation">This field is required.</p>
+             <button type="button" class="btn btn-primary signinBtn">Sign In</button>
+        </form>
+           <a href="" class="goToRegister"  data-bs-toggle="modal" data-bs-target="#staticRegister" data-bs-dismiss="modal" aria-label="Close">Don't have an account</a>
+      </div>
+   
+    </div>
+  </div>
+</div>
+            <!-- Register and sign in modals end here -->
+            <!-- Success registration modal -->
+
+<!-- Modal -->
+<div class="modal fade" id="staticSuccess" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+     
+      <div class="modal-body" id="successModal">
+       <i class="fa-regular fa-circle-check" id="checkCircle"></i>
+       <h3 class="registrationStatus"></h3>
+       <button type="button" class="btn continueBtn" data-bs-dismiss="modal" aria-label="Close">Continue</button>
+      </div>
+     
+    </div>
+  </div>
+</div>
+
 
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"

@@ -1,5 +1,5 @@
 "use strict";
-import express from "express";
+import express, { application } from "express";
 import handlebars from "express-handlebars";
 import bodyParser from "body-parser";
 import session from "express-session";
@@ -9,6 +9,10 @@ import ShoesData from "./shoesData.js";
 import shoesApi from "./api/shoes-api.js";
 import ShoesRoutes from "./routes/shoesCatRoutes.js";
 import cors from "cors";
+import * as dotenv from "dotenv";
+dotenv.config();
+import cookieParser from "cookie-parser";
+import Jwt from "jsonwebtoken";
 const pgp = pgPromise();
 
 const DATABASE_URL =
@@ -28,6 +32,8 @@ if (process.env.NODE_ENV == "production") {
 const db = pgp(config);
 
 const app = express();
+app.use(cookieParser());
+app.use(express.json());
 app.use(cors());
 app.use(
   session({
@@ -50,6 +56,25 @@ const shoesData = ShoesData(db);
 
 const shoesAPI = shoesApi(shoesData);
 const shoesRoutes = ShoesRoutes(shoesData);
+function checkAuth(req, res, next) {
+  const token = req.cookies.access_token;
+  if (!token) {
+    return res.json({
+      status: "No authentication found",
+    });
+  }
+  Jwt.verify(token, `${process.env.SECRET_KEY}`, function (err, userId) {
+    if (err) {
+      return res.json({
+        status: "Invalid token",
+      });
+    }
+    req.user = {
+      id: userId,
+    };
+    next();
+  });
+}
 app.get("/api/shoes", shoesAPI.displayProducts);
 app.get("/api/brands", shoesAPI.showBrands);
 app.get("/api/sizes", shoesAPI.showSizes);
@@ -76,7 +101,11 @@ app.get("/api/orders", shoesAPI.viewCart);
 app.get("/api/orders/edit/:qty/:orderId", shoesAPI.qtyUpdate);
 app.get("/api/remove/confirm/:id", shoesAPI.confirm);
 app.get("/api/remove/:id", shoesAPI.remove);
-app.get("/api/checkout", shoesAPI.checkOut);
+app.get("/api/checkout", checkAuth, shoesAPI.checkOut);
+app.get("/api/myOrders", checkAuth, shoesAPI.orders);
+app.post("/api/register", shoesAPI.registerUser);
+app.post("/api/login", shoesAPI.login);
+app.get("/api/logout", shoesAPI.logout);
 
 const PORT = process.env.PORT || 3060;
 app.listen(PORT, function () {

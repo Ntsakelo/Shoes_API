@@ -389,6 +389,56 @@ export default function ShoesData(db) {
       console.log(err);
     }
   }
+  async function checkUser(data) {
+    try {
+      let results = await db.oneOrNone(
+        "select count(*) from customers where firstname = $1 and surname = $2",
+        [data.firstName, data.lastName]
+      );
+      return results;
+    } catch (err) {
+      console.log(err);
+    }
+  }
+  async function register(data) {
+    try {
+      let results = await db.oneOrNone(
+        "select count(*) from customers where firstname = $1 and surname = $2",
+        [data.firstName, data.lastName]
+      );
+      if (Number(results.count) > 0) {
+        return;
+      } else {
+        let userData = [
+          data.firstName,
+          data.lastName,
+          data.email,
+          data.password,
+        ];
+        await db.none(
+          "insert into customers(firstname,surname,email,password) values($1,$2,$3,$4)",
+          userData
+        );
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+  async function getUser(email) {
+    try {
+      let results = await db.oneOrNone(
+        "select * from customers where email = $1",
+        [email]
+      );
+      if (!results) {
+        return;
+      } else {
+        return results;
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
   ///ADMIN LOGIC
   async function getLogin(user, password) {
     try {
@@ -482,5 +532,8 @@ export default function ShoesData(db) {
     removeItem,
     checkOutItems,
     createSale,
+    checkUser,
+    register,
+    getUser,
   };
 }

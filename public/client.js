@@ -26,6 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const confirmTemplate = document.querySelector(".confirmTemplate");
   const confirmBtn = document.querySelector(".confirmBtn");
   const checkOutConfirmBtn = document.querySelector(".checkOutConfirmBtn");
+  const continueBtn = document.querySelector(".continueBtn");
 
   //search/filter shoes
   const searchBtn = document.querySelector(".searchBtn");
@@ -33,7 +34,200 @@ document.addEventListener("DOMContentLoaded", function () {
   const colorSelect = document.querySelector(".colorSelect");
   const sizeSelect = document.querySelector(".sizeSelect");
   ////Search////
+  ////Validations
 
+  //login validation
+  const regInputs = document.querySelectorAll(".regInput");
+  const validateMsgs = document.querySelectorAll(".validation");
+  const signinInputs = document.querySelectorAll(".signinInput");
+  const validateLogin = document.querySelectorAll(".signInValidation");
+  function checkSigninInputs() {
+    for (let i = 0; i < signinInputs.length; i++) {
+      let signInput = signinInputs[i];
+      let validateTxt = validateLogin[i];
+      signInput.addEventListener("focusout", function () {
+        signInput.classList.remove("alert");
+        validateTxt.classList.remove("alertMsg");
+        if (signInput.value === "") {
+          signInput.classList.add("alert");
+          validateTxt.classList.add("alertMsg");
+        }
+      });
+    }
+  }
+  checkSigninInputs();
+  function removeValidations() {
+    const signInClose = document.querySelector(".signInClose");
+    const registerClose = document.querySelector(".registerClose");
+    signInClose.addEventListener("click", function () {
+      signinInputs.forEach((inputField) => {
+        inputField.value = "";
+        inputField.classList.remove("alert");
+      });
+      validateLogin.forEach((Msgs) => {
+        Msgs.classList.remove("alertMsg");
+      });
+    });
+    registerClose.addEventListener("click", function () {
+      regInputs.forEach((inputField) => {
+        inputField.value = "";
+        inputField.classList.remove("alert");
+      });
+      validateMsgs.forEach((Msgs) => {
+        Msgs.classList.remove("alertMsg");
+      });
+    });
+  }
+  removeValidations();
+  //user functions
+  function checkDetails() {
+    const nameValidation = document.querySelector(".nameValidation");
+    const lstNameValidation = document.querySelector(".lastNameValidation");
+    const emailValidation = document.querySelector(".emailValidation");
+    const passwrdValidation = document.querySelector(".passwordValidation");
+    const regBtn = document.querySelector(".regBtn");
+    let firstName = document.querySelector(".firstName");
+    let lastName = document.querySelector(".lastName");
+    let email = document.querySelector(".email");
+    let password = document.querySelector(".password");
+    let isFirstName = false;
+    let isLastName = false;
+    let isEmail = false;
+    let isPassword = false;
+    regBtn.removeAttribute("data-bs-toggle", "modal");
+    regBtn.removeAttribute("data-bs-target", "#staticSuccess");
+    regBtn.removeAttribute("data-bs-dismiss", "modal");
+    regBtn.removeAttribute("aria-label", "Close");
+    firstName.oninput = function () {
+      if (firstName.value.length > 0) {
+        firstName.classList.remove("alert");
+        nameValidation.classList.remove("alertMsg");
+        isFirstName = true;
+      } else {
+        firstName.classList.add("alert");
+        nameValidation.classList.add("alertMsg");
+        isFirstName = false;
+      }
+    };
+    lastName.oninput = function () {
+      if (lastName.value.length > 0) {
+        lastName.classList.remove("alert");
+        lstNameValidation.classList.remove("alertMsg");
+        isLastName = true;
+      } else {
+        lastName.classList.add("alert");
+        lstNameValidation.classList.add("alertMsg");
+        isLastName = false;
+      }
+    };
+    email.oninput = function () {
+      if (email.value.length > 0) {
+        email.classList.remove("alert");
+        emailValidation.classList.remove("alertMsg");
+        isEmail = true;
+      } else {
+        email.classList.add("alert");
+        emailValidation.classList.add("alertMsg");
+        isEmail = false;
+      }
+    };
+    password.oninput = function () {
+      if (password.value.length > 0) {
+        password.classList.remove("alert");
+        passwrdValidation.classList.remove("alertMsg");
+        isPassword = true;
+      } else {
+        password.classList.add("alert");
+        passwrdValidation.classList.add("alertMsg");
+        isPassword = false;
+      }
+      if (isLastName && isFirstName && isEmail && isPassword) {
+        regBtn.setAttribute("data-bs-toggle", "modal");
+        regBtn.setAttribute("data-bs-target", "#staticSuccess");
+        regBtn.setAttribute("data-bs-dismiss", "modal");
+        regBtn.setAttribute("aria-label", "Close");
+      } else {
+        regBtn.removeAttribute("data-bs-toggle", "modal");
+        regBtn.removeAttribute("data-bs-target", "#staticSuccess");
+        regBtn.removeAttribute("data-bs-dismiss", "modal");
+        regBtn.removeAttribute("aria-label", "Close");
+      }
+    };
+    //data-bs-toggle="modal" data-bs-target="#staticSuccess" data-bs-dismiss="modal" aria-label="Close"
+  }
+  function registerUser() {
+    checkDetails();
+    const regBtn = document.querySelector(".regBtn");
+    regBtn.addEventListener("click", function () {
+      let firstName = document.querySelector(".firstName").value;
+      let lastName = document.querySelector(".lastName").value;
+      let email = document.querySelector(".email").value;
+      let password = document.querySelector(".password").value;
+      const registrationStatus = document.querySelector(".registrationStatus");
+      for (let i = 0; i < regInputs.length; i++) {
+        if (regInputs[i].value === "") {
+          regInputs[i].classList.add("alert");
+          validateMsgs[i].classList.add("alertMsg");
+        }
+      }
+      if (firstName && lastName && email && password) {
+        axios
+          .post("/api/register", { firstName, lastName, email, password })
+          .then(function (results) {
+            let response = results.data;
+            let data = response.status;
+            registrationStatus.innerHTML = data;
+          });
+      }
+      firstName = "";
+      lastName = "";
+      email = "";
+      password = "";
+    });
+  }
+
+  registerUser();
+  continueBtn.addEventListener("click", function () {
+    const regBtn = document.querySelector(".regBtn");
+    regBtn.removeAttribute("data-bs-toggle", "modal");
+    regBtn.removeAttribute("data-bs-target", "#staticSuccess");
+    regBtn.removeAttribute("data-bs-dismiss", "modal");
+    regBtn.removeAttribute("aria-label", "Close");
+  });
+  function checkRegInputs() {
+    for (let i = 0; i < regInputs.length; i++) {
+      let regInput = regInputs[i];
+      let validateTxt = validateMsgs[i];
+      regInput.addEventListener("focusout", function () {
+        regInput.classList.remove("alert");
+        validateTxt.classList.remove("alertMsg");
+        if (regInput.value === "") {
+          regInput.classList.add("alert");
+          validateTxt.classList.add("alertMsg");
+        }
+      });
+    }
+  }
+  checkRegInputs();
+
+  function userLogin() {
+    const signinBtn = document.querySelector(".signinBtn");
+    signinBtn.addEventListener("click", function () {
+      let loginEmail = document.querySelector(".signInEmail").value;
+      let password = document.querySelector(".signInPassword").value;
+      axios
+        .post("/api/login", { loginEmail, password })
+        .then(function (results) {
+          let response = results.data;
+          if (response.status) {
+            console.log(response.status);
+          } else {
+            console.log(response.data);
+          }
+        });
+    });
+  }
+  userLogin();
   //instances
   const shoesServices = ShoesServices();
   let products = [];
@@ -80,6 +274,8 @@ document.addEventListener("DOMContentLoaded", function () {
       bgNavList.innerHTML = bgTemplate({
         category: data,
       });
+      const allFilter = document.querySelector(".All");
+      allFilter.classList.add("active");
       catCount2 = document.querySelector(".itemsCount");
       categoryFilter();
       itemsCount();
@@ -90,6 +286,9 @@ document.addEventListener("DOMContentLoaded", function () {
   function categoryFilter() {
     const navLinks = document.querySelectorAll(".nav-link");
     navLinks.forEach((link) => {
+      if (link.id === "user") {
+        return;
+      }
       link.addEventListener("click", function () {
         axios.get(`/api/shoes/${link.id}`).then(function (results) {
           let response = results.data;
@@ -638,6 +837,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
   remove();
+  //checkout function needs to be assessed
   function checkOut() {
     checkOutConfirmBtn.addEventListener("click", function () {
       axios.get("/api/checkout").then(function (results) {
