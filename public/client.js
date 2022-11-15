@@ -89,53 +89,41 @@ document.addEventListener("DOMContentLoaded", function () {
     let lastName = document.querySelector(".lastName");
     let email = document.querySelector(".email");
     let password = document.querySelector(".password");
-    let isFirstName = false;
-    let isLastName = false;
-    let isEmail = false;
-    let isPassword = false;
 
     firstName.oninput = function () {
       if (firstName.value.length > 0) {
         firstName.classList.remove("alert");
         nameValidation.classList.remove("alertMsg");
-        isFirstName = true;
       } else {
         firstName.classList.add("alert");
         nameValidation.classList.add("alertMsg");
-        isFirstName = false;
       }
     };
     lastName.oninput = function () {
       if (lastName.value.length > 0) {
         lastName.classList.remove("alert");
         lstNameValidation.classList.remove("alertMsg");
-        isLastName = true;
       } else {
         lastName.classList.add("alert");
         lstNameValidation.classList.add("alertMsg");
-        isLastName = false;
       }
     };
     email.oninput = function () {
       if (email.value.length > 0) {
         email.classList.remove("alert");
         emailValidation.classList.remove("alertMsg");
-        isEmail = true;
       } else {
         email.classList.add("alert");
         emailValidation.classList.add("alertMsg");
-        isEmail = false;
       }
     };
     password.oninput = function () {
       if (password.value.length > 0) {
         password.classList.remove("alert");
         passwrdValidation.classList.remove("alertMsg");
-        isPassword = true;
       } else {
         password.classList.add("alert");
         passwrdValidation.classList.add("alertMsg");
-        isPassword = false;
       }
     };
   }
