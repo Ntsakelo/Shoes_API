@@ -49,8 +49,12 @@
                         <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#staticRegister">Register</a></li>
                         <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#staticLogin">Sign In</a></li>
                         <li><a class="dropdown-item" href="#">My Orders</a></li>
+                        <li><a class="dropdown-item" id="signOutLnk" href="#">Sign Out</a></li>
                       </ul>
                     </div>
+                     </li>
+                     <li>
+                      <p class="signInName"></p>
                      </li>
         
 
@@ -74,9 +78,11 @@
                 <ul>
                   <h3 class="userHead">User</h3>
                   <li><a class="smallLink nav-link RegisterLink" href="#" data-bs-toggle="modal" data-bs-target="#staticRegister"><h5 class="text-white h4">Register</h5></a></li>
-                  <li><a class="smallLink nav-link" href="#" data-bs-toggle="modal" data-bs-target="#staticLogin"><h5 class="text-white h4">Sign In</h5></a></li>
+                  <li><a class="smallLink nav-link"  href="#" data-bs-toggle="modal" data-bs-target="#staticLogin"><h5 class="text-white h4">Sign In</h5></a></li>
                   <li><a class="smallLink nav-link" href="#"><h5 class="text-white h4">My Orders</h5></a></li>
+                  <li><a class="smallLink nav-link" id="signOutLnk" href="#"><h5 class="text-white h4">Sign Out</h5></a></li>
                 </ul>
+             
                  
                 
                
@@ -441,14 +447,14 @@
               <h5 class="totText">Total</h5>
               <h5 class="tot">R{{this.totAmount}}</h5>
             </div>
+            {{/each}}
             <div class="d-grid gap-2 col-6 mx-auto">
-              <button class="btn btn-primary checkoutBtn" type="button" data-bs-toggle="modal" data-bs-target="#purchaseConfirm">
+              <button class="btn btn-primary checkoutBtn" type="button" data-bs-toggle="modal" data-bs-target="#purchaseForm">
                 CHECKOUT
               </button>
             </div>
-          </div>
+        </div>
            
-          {{/each}}
         </script>
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
   <div class="modal-dialog modal-fullscreen">
@@ -496,19 +502,25 @@
     </div>
   </div>
 </div>
-<div class="modal fade" id="purchaseConfirm" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade" id="purchaseForm" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="staticBackdropLabel">Check out</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body" id="confirmPurchase">
-        Check out your cart items?
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">NO</button>
-        <a href="/"><button type="button" class="btn btn-primary checkOutConfirmBtn" data-bs-dismiss="modal">YES</button></a>
+      <div class="modal-body" id="Purchase">
+     
+        <a class="paylogo" href="https://www.freepnglogos.com/pics/visa-logo-png" title="Image from freepnglogos.com"><img src="https://www.freepnglogos.com/uploads/visa-card-and-mastercard-logo-png-28.png" width="200" alt="visa card and mastercard logo png" /></a>
+        <form action="">
+           <input type="text" aria-label="First name" class="regInput cardNumber" placeholder="Card Number">
+           
+           <input type="text" class="regInput expiryDate" placeholder="Expiry Date">
+      
+            <input type="text" class="regInput cvv" placeholder="CVV">
+            <input type="text" class="regInput cardHolder" placeholder="Name on Card">
+              <button type="button" class="btn btn-primary purchaseBtn" >PROCEED TO CHECKOUT</button>
+        </form>
       </div>
     </div>
   </div>
@@ -524,6 +536,7 @@
       <div class="modal-body" id="regFieldsDisplay">
         <h4>We are so happy to have you join us!</h4>
         <p>Lets get you started on your shopping journey...</p>
+         <p class="registrationStatus err"> </p>
         <form class="regForm" action="">
              <input type="text" aria-label="First name" class="regInput firstName" placeholder="First Name">
              <p class="validation nameValidation">This field is required.</p>
@@ -552,6 +565,7 @@
       <div class="modal-body">
         <h4>Welcome Back!</h4>
         <p>Enjoy your shopping...</p>
+        <p class="loginStatus err"> </p>
         <form class="signInForm" action="">
              <input type="email" aria-label="First name" class="signinInput signInEmail" placeholder="Email">
              <p class="signInValidation">This field is required.</p>
@@ -565,25 +579,6 @@
     </div>
   </div>
 </div>
-            <!-- Register and sign in modals end here -->
-            <!-- Success registration modal -->
-
-<!-- Modal -->
-<div class="modal fade" id="staticSuccess" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-     
-      <div class="modal-body" id="successModal">
-       <i class="fa-regular fa-circle-check" id="checkCircle"></i>
-       <h3 class="registrationStatus"></h3>
-       <button type="button" class="btn continueBtn" data-bs-dismiss="modal" aria-label="Close">Continue</button>
-      </div>
-     
-    </div>
-  </div>
-</div>
-
-
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"

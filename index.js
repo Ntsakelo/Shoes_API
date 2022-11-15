@@ -60,7 +60,7 @@ function checkAuth(req, res, next) {
   const token = req.cookies.access_token;
   if (!token) {
     return res.json({
-      status: "No authentication found",
+      status: "No token found",
     });
   }
   Jwt.verify(token, `${process.env.SECRET_KEY}`, function (err, userId) {
@@ -105,6 +105,7 @@ app.get("/api/checkout", checkAuth, shoesAPI.checkOut);
 app.get("/api/myOrders", checkAuth, shoesAPI.orders);
 app.post("/api/register", shoesAPI.registerUser);
 app.post("/api/login", shoesAPI.login);
+app.get("/api/verify", shoesAPI.checkLogin);
 app.get("/api/logout", shoesAPI.logout);
 
 const PORT = process.env.PORT || 3060;

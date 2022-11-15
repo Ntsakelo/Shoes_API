@@ -61,7 +61,7 @@ export default function (ShoesData) {
           });
           res.cookie("access_token", token, { httpOnly: true }).json({
             firstname: user.firstname,
-            status: "Login successful",
+            status: "Logged in",
           });
         } else {
           return res.json({
@@ -73,12 +73,44 @@ export default function (ShoesData) {
       next(err);
     }
   }
+  async function checkLogin(req, res, next) {
+    try {
+      const token = req.cookies.access_token;
+      if (!token) {
+        return res.json({
+          status: "No login",
+        });
+      }
+      Jwt.verify(
+        token,
+        `${process.env.SECRET_KEY}`,
+        async function (err, userId) {
+          if (err) {
+            return res.json({
+              status: "Invalid token",
+            });
+          }
+          let results = await ShoesData.getUserById(userId.id);
+          res.json({
+            data: results,
+          });
+        }
+      );
+    } catch (err) {
+      next(err);
+    }
+  }
   async function logout(req, res, next) {
     try {
-      res.clearCookie("access_token");
-      res.json({
-        status: "Logout successful",
-      });
+      const token = req.cookies.access_token;
+      if (!token) {
+        return;
+      } else {
+        res.clearCookie("access_token");
+        res.json({
+          status: "Logout successful",
+        });
+      }
     } catch (err) {
       next(err);
     }
@@ -349,6 +381,7 @@ export default function (ShoesData) {
     getCategories,
     registerUser,
     login,
+    checkLogin,
     logout,
     displayProducts,
     getShoe,

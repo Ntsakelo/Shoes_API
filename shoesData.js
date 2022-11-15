@@ -439,6 +439,17 @@ export default function ShoesData(db) {
       console.log(err);
     }
   }
+  async function getUserById(id) {
+    try {
+      let results = await db.oneOrNone(
+        "select firstname from customers where id=$1",
+        [id]
+      );
+      return results;
+    } catch (err) {
+      console.log(err);
+    }
+  }
   ///ADMIN LOGIC
   async function getLogin(user, password) {
     try {
@@ -535,5 +546,6 @@ export default function ShoesData(db) {
     checkUser,
     register,
     getUser,
+    getUserById,
   };
 }

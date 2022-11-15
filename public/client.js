@@ -26,7 +26,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const confirmTemplate = document.querySelector(".confirmTemplate");
   const confirmBtn = document.querySelector(".confirmBtn");
   const checkOutConfirmBtn = document.querySelector(".checkOutConfirmBtn");
-  const continueBtn = document.querySelector(".continueBtn");
 
   //search/filter shoes
   const searchBtn = document.querySelector(".searchBtn");
@@ -94,10 +93,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let isLastName = false;
     let isEmail = false;
     let isPassword = false;
-    regBtn.removeAttribute("data-bs-toggle", "modal");
-    regBtn.removeAttribute("data-bs-target", "#staticSuccess");
-    regBtn.removeAttribute("data-bs-dismiss", "modal");
-    regBtn.removeAttribute("aria-label", "Close");
+
     firstName.oninput = function () {
       if (firstName.value.length > 0) {
         firstName.classList.remove("alert");
@@ -141,19 +137,7 @@ document.addEventListener("DOMContentLoaded", function () {
         passwrdValidation.classList.add("alertMsg");
         isPassword = false;
       }
-      if (isLastName && isFirstName && isEmail && isPassword) {
-        regBtn.setAttribute("data-bs-toggle", "modal");
-        regBtn.setAttribute("data-bs-target", "#staticSuccess");
-        regBtn.setAttribute("data-bs-dismiss", "modal");
-        regBtn.setAttribute("aria-label", "Close");
-      } else {
-        regBtn.removeAttribute("data-bs-toggle", "modal");
-        regBtn.removeAttribute("data-bs-target", "#staticSuccess");
-        regBtn.removeAttribute("data-bs-dismiss", "modal");
-        regBtn.removeAttribute("aria-label", "Close");
-      }
     };
-    //data-bs-toggle="modal" data-bs-target="#staticSuccess" data-bs-dismiss="modal" aria-label="Close"
   }
   function registerUser() {
     checkDetails();
@@ -176,7 +160,22 @@ document.addEventListener("DOMContentLoaded", function () {
           .then(function (results) {
             let response = results.data;
             let data = response.status;
-            registrationStatus.innerHTML = data;
+            if (data === "The user already exists") {
+              registrationStatus.innerHTML = `<i class="fa-regular fa-circle-xmark" id="checkCircle"></i> ${data}`;
+
+              registrationStatus.classList.remove("success");
+              registrationStatus.classList.add("error");
+            }
+            if (data === "Registration was successful") {
+              registrationStatus.innerHTML = `<i class="fa-regular fa-circle-check" id="checkCircle"></i> ${data}`;
+              registrationStatus.classList.remove("error");
+              registrationStatus.classList.add("success");
+            }
+            if (registrationStatus.innerHTML !== "") {
+              setTimeout(function () {
+                registrationStatus.innerHTML = "";
+              }, 3000);
+            }
           });
       }
       firstName = "";
@@ -187,13 +186,6 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   registerUser();
-  continueBtn.addEventListener("click", function () {
-    const regBtn = document.querySelector(".regBtn");
-    regBtn.removeAttribute("data-bs-toggle", "modal");
-    regBtn.removeAttribute("data-bs-target", "#staticSuccess");
-    regBtn.removeAttribute("data-bs-dismiss", "modal");
-    regBtn.removeAttribute("aria-label", "Close");
-  });
   function checkRegInputs() {
     for (let i = 0; i < regInputs.length; i++) {
       let regInput = regInputs[i];
@@ -209,25 +201,92 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
   checkRegInputs();
-
+  let userName = "";
   function userLogin() {
     const signinBtn = document.querySelector(".signinBtn");
+    const signInName = document.querySelector(".signInName");
     signinBtn.addEventListener("click", function () {
+      const loginStatus = document.querySelector(".loginStatus");
+      const signOutLnk = document.querySelectorAll("#signOutLnk");
       let loginEmail = document.querySelector(".signInEmail").value;
       let password = document.querySelector(".signInPassword").value;
       axios
         .post("/api/login", { loginEmail, password })
         .then(function (results) {
           let response = results.data;
-          if (response.status) {
-            console.log(response.status);
+          if (response.firstname) {
+            signOutLnk.forEach((link) => {
+              link.innerHTML = `Sign Out(${response.firstname})`;
+            });
+            loginStatus.innerHTML = `<i class="fa-regular fa-circle-check" id="checkCircle"></i> ${response.status} as ${response.firstname}`;
+            signInName.innerHTML = response.firstname;
+            loginStatus.classList.remove("error");
+            loginStatus.classList.add("success");
           } else {
-            console.log(response.data);
+            signOutLnk.forEach((link) => {
+              link.innerHTML = `Sign Out`;
+            });
+            loginStatus.innerHTML = `<i class="fa-regular fa-circle-xmark" id="checkCircle"></i> ${response.status}`;
+            loginStatus.classList.remove("success");
+            loginStatus.classList.add("error");
           }
+          if (loginStatus.innerHTML !== "") {
+            setTimeout(function () {
+              loginStatus.innerHTML = "";
+            }, 3000);
+          }
+          axios.get("/api/verify").then((results) => {
+            const checkoutBtn = document.querySelector(".checkoutBtn");
+            let response = results.data;
+            let data = response.data;
+            if (!data) {
+              checkoutBtn.setAttribute("data-bs-target", "#staticLogin");
+            } else {
+              checkoutBtn.setAttribute("data-bs-target", "#purchaseForm");
+            }
+          });
         });
     });
   }
   userLogin();
+  function verifyLogin() {
+    const signInName = document.querySelector(".signInName");
+    const signOutLnk = document.querySelectorAll("#signOutLnk");
+    axios.get("/api/verify").then((results) => {
+      let response = results.data;
+      let data = response.data;
+      if (data) {
+        signOutLnk.forEach((link) => {
+          link.innerHTML = `Sign Out(${data.firstname})`;
+        });
+        signInName.innerHTML = data.firstname;
+      } else if (!data) {
+        signOutLnk.forEach((link) => {
+          link.innerHTML = `Sign Out`;
+        });
+        signInName.innerHTML = "";
+      }
+    });
+  }
+  verifyLogin();
+  function logOut() {
+    const signOutLnk = document.querySelectorAll("#signOutLnk");
+    const signInName = document.querySelector(".signInName");
+    signOutLnk.forEach((link) => {
+      link.addEventListener("click", function () {
+        axios.get("/api/logout").then((results) => {
+          let response = results.data;
+          let data = response.status;
+          if (data) {
+            link.innerHTML = `Sign Out`;
+            signInName.innerHTML = "";
+          }
+        });
+      });
+    });
+    verifyLogin();
+  }
+  logOut();
   //instances
   const shoesServices = ShoesServices();
   let products = [];
@@ -280,6 +339,9 @@ document.addEventListener("DOMContentLoaded", function () {
       categoryFilter();
       itemsCount();
       displayCart();
+      userLogin();
+      verifyLogin();
+      logOut();
     });
   }
   navigation();
@@ -493,6 +555,7 @@ document.addEventListener("DOMContentLoaded", function () {
               item.priceState = "";
             }
           });
+          itemsDisplay.innerHTML = "";
           let template = Handlebars.compile(productListTemplate.innerHTML);
           itemsDisplay.innerHTML = template({
             item: data,
@@ -519,6 +582,7 @@ document.addEventListener("DOMContentLoaded", function () {
             item.priceState = "";
           }
         });
+        itemsDisplay.innerHTML = "";
         let template = Handlebars.compile(productListTemplate.innerHTML);
         itemsDisplay.innerHTML = template({
           item: data,
@@ -547,6 +611,7 @@ document.addEventListener("DOMContentLoaded", function () {
               item.priceState = "";
             }
           });
+          itemsDisplay.innerHTML = "";
           let template = Handlebars.compile(productListTemplate.innerHTML);
           itemsDisplay.innerHTML = template({
             item: data,
@@ -575,6 +640,7 @@ document.addEventListener("DOMContentLoaded", function () {
               item.priceState = "";
             }
           });
+          itemsDisplay.innerHTML = "";
           let template = Handlebars.compile(productListTemplate.innerHTML);
           itemsDisplay.innerHTML = template({
             item: data,
@@ -603,6 +669,7 @@ document.addEventListener("DOMContentLoaded", function () {
               item.priceState = "";
             }
           });
+          itemsDisplay.innerHTML = "";
           let template = Handlebars.compile(productListTemplate.innerHTML);
           itemsDisplay.innerHTML = template({
             item: data,
@@ -631,6 +698,7 @@ document.addEventListener("DOMContentLoaded", function () {
               item.priceState = "";
             }
           });
+          itemsDisplay.innerHTML = "";
           let template = Handlebars.compile(productListTemplate.innerHTML);
           itemsDisplay.innerHTML = template({
             item: data,
@@ -661,6 +729,7 @@ document.addEventListener("DOMContentLoaded", function () {
               item.priceState = "";
             }
           });
+          itemsDisplay.innerHTML = "";
           let template = Handlebars.compile(productListTemplate.innerHTML);
           itemsDisplay.innerHTML = template({
             item: data,
@@ -687,7 +756,6 @@ document.addEventListener("DOMContentLoaded", function () {
             totAmount += Number(item.price);
           });
           totList.push({ totQty, totAmount });
-
           let template = Handlebars.compile(ordersTemplate.innerHTML);
           ordersDisplay.innerHTML = template({
             orderItems: data,
@@ -696,10 +764,19 @@ document.addEventListener("DOMContentLoaded", function () {
           totalDisplay.innerHTML = template2({
             totals: totList,
           });
-
+          axios.get("/api/verify").then((results) => {
+            const checkoutBtn = document.querySelector(".checkoutBtn");
+            let response = results.data;
+            let data = response.data;
+            if (!data) {
+              checkoutBtn.setAttribute("data-bs-target", "#staticLogin");
+            } else {
+              checkoutBtn.setAttribute("data-bs-target", "#purchaseForm");
+            }
+          });
           myOrderUpdate();
           confirmRemoval();
-          sale();
+          userLogin();
         });
       });
     });
@@ -745,6 +822,16 @@ document.addEventListener("DOMContentLoaded", function () {
             totalDisplay.innerHTML = template2({
               totals: totList,
             });
+            axios.get("/api/verify").then((results) => {
+              const checkoutBtn = document.querySelector(".checkoutBtn");
+              let response = results.data;
+              let data = response.data;
+              if (!data) {
+                checkoutBtn.setAttribute("data-bs-target", "#staticLogin");
+              } else {
+                checkoutBtn.setAttribute("data-bs-target", "#purchaseForm");
+              }
+            });
           });
       });
     }
@@ -781,6 +868,16 @@ document.addEventListener("DOMContentLoaded", function () {
             totalDisplay.innerHTML = template2({
               totals: totList,
             });
+            axios.get("/api/verify").then((results) => {
+              const checkoutBtn = document.querySelector(".checkoutBtn");
+              let response = results.data;
+              let data = response.data;
+              if (!data) {
+                checkoutBtn.setAttribute("data-bs-target", "#staticLogin");
+              } else {
+                checkoutBtn.setAttribute("data-bs-target", "#purchaseForm");
+              }
+            });
           });
       });
     }
@@ -800,6 +897,16 @@ document.addEventListener("DOMContentLoaded", function () {
           let template = Handlebars.compile(confirmTemplate.innerHTML);
           confirmDisplay.innerHTML = template({
             itemName: list,
+          });
+          axios.get("/api/verify").then((results) => {
+            const checkoutBtn = document.querySelector(".checkoutBtn");
+            let response = results.data;
+            let data = response.data;
+            if (!data) {
+              checkoutBtn.setAttribute("data-bs-target", "#staticLogin");
+            } else {
+              checkoutBtn.setAttribute("data-bs-target", "#purchaseForm");
+            }
           });
         });
       });
@@ -829,7 +936,16 @@ document.addEventListener("DOMContentLoaded", function () {
         totalDisplay.innerHTML = template2({
           totals: totList,
         });
-
+        axios.get("/api/verify").then((results) => {
+          const checkoutBtn = document.querySelector(".checkoutBtn");
+          let response = results.data;
+          let data = response.data;
+          if (!data) {
+            checkoutBtn.setAttribute("data-bs-target", "#staticLogin");
+          } else {
+            checkoutBtn.setAttribute("data-bs-target", "#purchaseForm");
+          }
+        });
         myOrderUpdate();
         confirmRemoval();
         itemsCount();
@@ -839,37 +955,54 @@ document.addEventListener("DOMContentLoaded", function () {
   remove();
   //checkout function needs to be assessed
   function checkOut() {
-    checkOutConfirmBtn.addEventListener("click", function () {
-      axios.get("/api/checkout").then(function (results) {
-        let response = results.data;
-        let data = response.data;
-        let totQty = 0;
-        let totAmount = 0;
-        let totList = [];
-        cartData = data;
-        data.forEach((item) => {
-          totQty += item.order_qty;
-          totAmount += Number(item.price);
-        });
-        totList.push({ totQty, totAmount });
-
-        let template = Handlebars.compile(ordersTemplate.innerHTML);
-        ordersDisplay.innerHTML = template({
-          orderItems: data,
-        });
-        let template2 = Handlebars.compile(totalTemplate.innerHTML);
-        totalDisplay.innerHTML = template2({
-          totals: totList,
-        });
-
-        myOrderUpdate();
-        confirmRemoval();
-        itemsCount();
-      });
+    const purchaseBtn = document.querySelector(".purchaseBtn");
+    const cardNumber = document.querySelector(".cardNumber");
+    const expiryDate = document.querySelector(".expiryDate");
+    const cvv = document.querySelector(".cvv");
+    cardNumber.onkeypress = function () {
+      if ((cardNumber.value.length + 1) % 5 === 0) {
+        cardNumber.value = cardNumber.value + " ";
+      }
+    };
+    expiryDate.onkeypress = function () {
+      if (/^\d+$/.test(expiryDate.value)) {
+        alert("yes");
+      } else if (!/^\d+$/.test(expiryDate.value)) {
+        expiryDate.value.replace(expiryDate.value, "");
+      }
+      if (expiryDate.value.length === 2) {
+        expiryDate.value = expiryDate.value + "/";
+      }
+    };
+    purchaseBtn.addEventListener("click", function () {
+      // axios.get("/api/checkout").then(function (results) {
+      //   let response = results.data;
+      //   let data = response.data;
+      //   let totQty = 0;
+      //   let totAmount = 0;
+      //   let totList = [];
+      //   cartData = data;
+      //   data.forEach((item) => {
+      //     totQty += item.order_qty;
+      //     totAmount += Number(item.price);
+      //   });
+      //   totList.push({ totQty, totAmount });
+      //   let template = Handlebars.compile(ordersTemplate.innerHTML);
+      //   ordersDisplay.innerHTML = template({
+      //     orderItems: data,
+      //   });
+      //   let template2 = Handlebars.compile(totalTemplate.innerHTML);
+      //   totalDisplay.innerHTML = template2({
+      //     totals: totList,
+      //   });
+      //   myOrderUpdate();
+      //   confirmRemoval();
+      //   itemsCount();
+      // });
     });
   }
 
-  ///checkOut();
+  checkOut();
 });
 
 /////

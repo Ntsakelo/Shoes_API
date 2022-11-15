@@ -430,9 +430,9 @@ input::-webkit-inner-spin-button {
 #successModal {
   text-align: center;
 }
-#checkCircle {
-  color: green;
-  font-size: 50px;
+.fa-regular {
+  color: white;
+  margin-right: 5px;
 }
 .continueBtn {
   display: block;
@@ -442,6 +442,48 @@ input::-webkit-inner-spin-button {
 }
 .continueBtn:hover {
   color: white;
+}
+.registrationStatus {
+  width: 50%;
+  margin: auto;
+  margin-bottom: 20px;
+}
+.loginStatus {
+  width: 50%;
+  margin: auto;
+  margin-bottom: 20px;
+}
+.success {
+  background-color: rgb(19, 162, 19);
+  color: white;
+}
+.error {
+  background-color: rgb(251, 39, 39);
+  color: white;
+}
+.signInName {
+  margin-top: 10px;
+}
+.paylogo {
+  float: right;
+  margin-bottom: 10px;
+}
+.expiryDate {
+  width: 100px;
+  margin-top: 20px;
+  display: inline;
+}
+.cvv {
+  width: 360px;
+  display: inline;
+}
+.cardHolder {
+  margin-top: 20px;
+}
+.purchaseBtn {
+  display: block;
+  margin: auto;
+  margin-top: 10px;
 }
 @media screen and (width: 280px) {
   #letterStyle {
